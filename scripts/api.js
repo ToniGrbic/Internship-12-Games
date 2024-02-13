@@ -9,7 +9,7 @@ async function getGames() {
       `${baseUrl}/games?${keyParam}&ordering=metacritic-released`
     );
     const data = await response.json();
-    return data;
+    return data.results;
   } catch (error) {
     console.error(error);
   }

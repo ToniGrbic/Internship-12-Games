@@ -2,16 +2,6 @@ import getGames from "./api.js";
 
 const cardsContainer = document.querySelector(".cards-container");
 
-async function fetchGames() {
-  try {
-    const games = await getGames();
-    console.log(games.results);
-    return games.results;
-  } catch (error) {
-    console.error(error);
-  }
-}
-
 function createCard(game) {
   return `
     <img class="card-img" src=${game.background_image} alt=${game.name}>
@@ -29,7 +19,7 @@ function createCard(game) {
     `;
 }
 
-fetchGames().then((games) => {
+getGames().then((games) => {
   for (const game of games) {
     const card = document.createElement("div");
     card.classList.add("card");
