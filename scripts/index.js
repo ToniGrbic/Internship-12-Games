@@ -25,6 +25,9 @@ function createStoreCard(store) {
       <p class="card-text"> 
            <a href="https://${store.domain}" class="store-link">Website</a>
        </p>
+       <p class="card-text">
+            ${store.games_count} games available
+       </p>
     </div>
     `;
 }
@@ -178,4 +181,6 @@ function getPlatformIds(platformNames) {
       storesContainer.appendChild(card);
     }
   });
+
+  //************ ZDK6 ************
 })();
