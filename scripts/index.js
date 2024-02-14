@@ -3,17 +3,20 @@ import {
   getGamesBySearchTerm,
   getPlatforms,
   getGamesByPlatform,
+  getGameDetails,
 } from "./api.js";
 
 const cardsContainer1 = document.querySelector("#zdk1 .cards-container");
 const cardsContainer2 = document.querySelector("#zdk2 .cards-container");
 const cardsContainer3 = document.querySelector("#zdk3 .cards-container");
-console.log(cardsContainer3);
+const cardDetailsContainer = document.querySelector("#zdk4");
+console.log(cardDetailsContainer);
 function filterUnsafeGames(games) {
   return games.filter(
     (game) => game.esrb_rating !== null && game.esrb_rating != 5
   );
 }
+
 function createCard(game) {
   return `
     <img class="card-img" src=${game.background_image} alt=${game.name}>
@@ -31,6 +34,21 @@ function createCard(game) {
     `;
 }
 
+function createStarRating(rating) {
+  const starsContainer = document.createElement("div");
+  starsContainer.classList.add("stars-container");
+  for (let i = 0; i < 5; i++) {
+    const star = document.createElement("i");
+    star.classList.add("fa-regular", "fa-star");
+    const ratingRounded = Math.round(rating);
+    if (i + 1 <= ratingRounded) {
+      star.classList.add("filled-star");
+    }
+    starsContainer.appendChild(star);
+  }
+  cardDetailsContainer.appendChild(starsContainer);
+}
+
 function appendCards(games, container) {
   for (const game of games) {
     const card = document.createElement("div");
@@ -39,33 +57,36 @@ function appendCards(games, container) {
     container.appendChild(card);
   }
 }
-//ZDK1
-getTopRatedGames().then((games) => {
-  appendCards(filterUnsafeGames(games), cardsContainer1);
-});
+(async () => {
+  //************ ZDK1 ************
+  getTopRatedGames().then((games) => {
+    appendCards(filterUnsafeGames(games), cardsContainer1);
+  });
 
-//ZDK2
-const searchTerm = prompt("Enter a game name to search for:");
-const searchTermTextEl = document.querySelector(".search-term");
-searchTermTextEl.textContent = searchTerm;
+  //************ ZDK2 ************
+  const searchTerm = prompt("Enter a game name to search for:");
+  const searchTermTextEl = document.querySelector(".search-term");
+  searchTermTextEl.textContent = searchTerm;
 
-getGamesBySearchTerm(searchTerm).then((games) => {
-  appendCards(filterUnsafeGames(games), cardsContainer2);
-});
+  getGamesBySearchTerm(searchTerm).then((games) => {
+    appendCards(filterUnsafeGames(games), cardsContainer2);
+  });
 
-//ZDK3
-getPlatforms().then((platforms) => {
+  //************ ZDK3 ************
+
+  const platforms = await getPlatforms();
+
   const platformNames = platforms.map((platform) => {
     return {
       id: platform.id,
       name: platform.name,
     };
   });
-  console.log(platformNames);
+
   const platformsContainer = document.querySelector(".platforms");
 
   for (const platform of platformNames) {
-    const platformEl = document.createElement("div");
+    const platformEl = document.createElement("li");
     platformEl.classList.add("platform");
     platformEl.textContent = platform.name;
     platformsContainer.appendChild(platformEl);
@@ -79,23 +100,41 @@ getPlatforms().then((platforms) => {
     );
     const selectedPlatformsArray = selectedPlatforms.split(",");
 
+    // Check that all inputed platforms are from the top 10
     containsPlatforms = selectedPlatformsArray.every((platform) => {
       return platformNames.some(
         (platformName) => platformName.name === platform
       );
     });
-    platformIds = selectedPlatformsArray.map((platform) => {
-      return platformNames.find(
-        (platformName) => platformName.name === platform
-      ).id;
-    });
-
+    console.log(containsPlatforms);
     if (!containsPlatforms) {
       alert("Invalid platform names. Please try again.");
+      continue;
     }
+
+    // find the platform ids
+    platformIds = selectedPlatformsArray
+      .map((platform) => {
+        return platformNames.find(
+          (platformName) => platformName.name === platform
+        ).id;
+      })
+      .join(",");
   } while (!containsPlatforms);
 
   getGamesByPlatform(platformIds).then((games) => {
-    appendCards(games, cardsContainer3);
+    appendCards(filterUnsafeGames(games), cardsContainer3);
   });
-});
+
+  //************ ZDK4 ************
+  const gameId = prompt("Enter a game id to get details:");
+  getGameDetails(gameId).then((game) => {
+    console.log(game);
+    const card = document.createElement("div");
+    card.classList.add("card");
+    card.innerHTML = createCard(game);
+    cardDetailsContainer.appendChild(card);
+
+    createStarRating(game.rating);
+  });
+})();

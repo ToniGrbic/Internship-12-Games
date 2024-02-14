@@ -11,7 +11,7 @@ async function fetchData(url) {
     const response = await fetch(url);
     const data = await response.json();
     console.log(data);
-    return data.results;
+    return data;
   } catch (error) {
     console.error(error);
   }
@@ -21,7 +21,7 @@ async function getTopRatedGames() {
   searchParams.append("ordering", "-metacritic");
 
   const games = await fetchData(`${baseUrl}/games?${searchParams}`);
-  return games;
+  return games.results;
 }
 
 async function getGamesBySearchTerm(searchTerm = "GTA") {
@@ -31,7 +31,7 @@ async function getGamesBySearchTerm(searchTerm = "GTA") {
   searchParams.append("ordering", "released");
 
   const games = await fetchData(`${baseUrl}/games?${searchParams}`);
-  return games;
+  return games.results;
 }
 
 async function getGamesByPlatform(platformIds) {
@@ -42,7 +42,7 @@ async function getGamesByPlatform(platformIds) {
   searchParams.append("ordering", "name");
 
   const games = await fetchData(`${baseUrl}/games?${searchParams}`);
-  return games;
+  return games.results;
 }
 
 async function getPlatforms() {
@@ -51,12 +51,18 @@ async function getPlatforms() {
   searchParams.append("ordering", "-games_count");
 
   const platforms = await fetchData(`${baseUrl}/platforms?${searchParams}`);
-  return platforms;
+  return platforms.results;
 }
 
+async function getGameDetails(gameId) {
+  const searchParams = keyParam();
+  const game = await fetchData(`${baseUrl}/games/${gameId}?${searchParams}`);
+  return game;
+}
 export {
   getTopRatedGames,
   getGamesBySearchTerm,
   getPlatforms,
   getGamesByPlatform,
+  getGameDetails,
 };
