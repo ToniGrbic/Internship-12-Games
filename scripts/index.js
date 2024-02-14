@@ -13,7 +13,7 @@ const cardDetails = document.querySelector("#zdk4");
 
 function filterUnsafeGames(games) {
   return games.filter(
-    (game) => game.esrb_rating !== null && game.esrb_rating != 5
+    (game) => game.esrb_rating !== null && game.esrb_rating.id != 5
   );
 }
 
@@ -76,20 +76,19 @@ function appendCards(games, container) {
     container.appendChild(card);
   }
 }
+
 (async () => {
   //************ ZDK1 ************
-  getTopRatedGames().then((games) => {
-    appendCards(filterUnsafeGames(games), cardsContainer1);
-  });
+  const topGames = await getTopRatedGames();
+  appendCards(filterUnsafeGames(topGames), cardsContainer1);
 
   //************ ZDK2 ************
   const searchTerm = prompt("Enter a game name to search for:");
   const searchTermTextEl = document.querySelector(".search-term");
   searchTermTextEl.textContent = searchTerm;
 
-  getGamesBySearchTerm(searchTerm).then((games) => {
-    appendCards(filterUnsafeGames(games), cardsContainer2);
-  });
+  const gamesBySearch = await getGamesBySearchTerm(searchTerm);
+  appendCards(filterUnsafeGames(gamesBySearch), cardsContainer2);
 
   //************ ZDK3 ************
   const platforms = await getPlatforms();
@@ -143,9 +142,8 @@ function appendCards(games, container) {
       .join(",");
   } while (!containsPlatforms);
 
-  getGamesByPlatform(platformIds).then((games) => {
-    appendCards(filterUnsafeGames(games), cardsContainer3);
-  });
+  const gamesByPlatform = await getGamesByPlatform(platformIds);
+  appendCards(filterUnsafeGames(gamesByPlatform), cardsContainer3);
 
   //************ ZDK4 ************
   const gameId = prompt("Enter a game id to get details:");
