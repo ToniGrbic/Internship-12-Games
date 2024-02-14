@@ -10,14 +10,26 @@ const cardsContainer1 = document.querySelector("#zdk1 .cards-container");
 const cardsContainer2 = document.querySelector("#zdk2 .cards-container");
 const cardsContainer3 = document.querySelector("#zdk3 .cards-container");
 const cardDetailsContainer = document.querySelector("#zdk4");
-console.log(cardDetailsContainer);
+
 function filterUnsafeGames(games) {
   return games.filter(
     (game) => game.esrb_rating !== null && game.esrb_rating != 5
   );
 }
 
-function createCard(game) {
+function createStoreCard(store) {
+  return `
+  <img class="card-img" src=${store.image_background} alt=${store.name}>
+    <div class="card-body">
+      <h5 class="card-title">${store.name}</h5>
+      <p class="card-text"> 
+           <a href="https://${store.domain}" class="store-link">Website</a>
+       </p>
+    </div>
+    `;
+}
+
+function createGameCard(game) {
   return `
     <img class="card-img" src=${game.background_image} alt=${game.name}>
     <div class="card-body">
@@ -53,7 +65,7 @@ function appendCards(games, container) {
   for (const game of games) {
     const card = document.createElement("div");
     card.classList.add("card");
-    card.innerHTML = createCard(game);
+    card.innerHTML = createGameCard(game);
     container.appendChild(card);
   }
 }
@@ -132,9 +144,24 @@ function appendCards(games, container) {
     console.log(game);
     const card = document.createElement("div");
     card.classList.add("card");
-    card.innerHTML = createCard(game);
+    card.innerHTML = createGameCard(game);
     cardDetailsContainer.appendChild(card);
 
     createStarRating(game.rating);
+  });
+
+  //************ ZDK5 ************
+  const gameIdForStores = prompt("Enter a game id to get its stores:");
+  getGameDetails(gameIdForStores).then((game) => {
+    console.log(game);
+    const stores = game.stores;
+    const storesContainer = document.querySelector(".stores-container");
+
+    for (const store of stores) {
+      const card = document.createElement("div");
+      card.classList.add("card");
+      card.innerHTML = createStoreCard(store.store);
+      storesContainer.appendChild(card);
+    }
   });
 })();
