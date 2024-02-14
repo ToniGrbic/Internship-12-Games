@@ -9,7 +9,7 @@ import {
 const cardsContainer1 = document.querySelector("#zdk1 .cards-container");
 const cardsContainer2 = document.querySelector("#zdk2 .cards-container");
 const cardsContainer3 = document.querySelector("#zdk3 .cards-container");
-const cardDetailsContainer = document.querySelector("#zdk4");
+const cardDetails = document.querySelector("#zdk4");
 
 function filterUnsafeGames(games) {
   return games.filter(
@@ -47,8 +47,15 @@ function createGameCard(game) {
 }
 
 function createStarRating(rating) {
+  const cardDetailsContainer = document.querySelector("#zdk4 .card");
+
   const starsContainer = document.createElement("div");
   starsContainer.classList.add("stars-container");
+
+  const ratingExact = document.createElement("p");
+  ratingExact.textContent = `Rating: ${rating}/5`;
+  starsContainer.appendChild(ratingExact);
+
   for (let i = 0; i < 5; i++) {
     const star = document.createElement("i");
     star.classList.add("fa-regular", "fa-star");
@@ -85,7 +92,6 @@ function appendCards(games, container) {
   });
 
   //************ ZDK3 ************
-
   const platforms = await getPlatforms();
 
   const platformNames = platforms.map((platform) => {
@@ -118,11 +124,14 @@ function appendCards(games, container) {
         (platformName) => platformName.name === platform
       );
     });
-    console.log(containsPlatforms);
+
     if (!containsPlatforms) {
       alert("Invalid platform names. Please try again.");
       continue;
     }
+
+    const platformListSpan = document.querySelector("#selected-platforms");
+    platformListSpan.textContent = selectedPlatforms;
 
     // find the platform ids
     platformIds = selectedPlatformsArray
@@ -145,7 +154,7 @@ function appendCards(games, container) {
     const card = document.createElement("div");
     card.classList.add("card");
     card.innerHTML = createGameCard(game);
-    cardDetailsContainer.appendChild(card);
+    cardDetails.appendChild(card);
 
     createStarRating(game.rating);
   });
@@ -155,7 +164,9 @@ function appendCards(games, container) {
   getGameDetails(gameIdForStores).then((game) => {
     console.log(game);
     const stores = game.stores;
-    const storesContainer = document.querySelector(".stores-container");
+    const storesContainer = document.querySelector(" #zdk5 .cards-container");
+    const storesTitleSpan = document.querySelector("#game-name-stores");
+    storesTitleSpan.textContent = game.name;
 
     for (const store of stores) {
       const card = document.createElement("div");

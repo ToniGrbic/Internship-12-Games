@@ -43,6 +43,7 @@ body {
 }
 .stars-container {
   margin-left: 12px;
+  padding-bottom: 12px;
 }
 .filled-star {
   background-color: #f1c30b;
