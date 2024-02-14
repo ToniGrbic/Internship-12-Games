@@ -77,38 +77,7 @@ function appendCards(games, container) {
   }
 }
 
-(async () => {
-  //************ ZDK1 ************
-  const topGames = await getTopRatedGames();
-  appendCards(filterUnsafeGames(topGames), cardsContainer1);
-
-  //************ ZDK2 ************
-  const searchTerm = prompt("Enter a game name to search for:");
-  const searchTermTextEl = document.querySelector(".search-term");
-  searchTermTextEl.textContent = searchTerm;
-
-  const gamesBySearch = await getGamesBySearchTerm(searchTerm);
-  appendCards(filterUnsafeGames(gamesBySearch), cardsContainer2);
-
-  //************ ZDK3 ************
-  const platforms = await getPlatforms();
-
-  const platformNames = platforms.map((platform) => {
-    return {
-      id: platform.id,
-      name: platform.name,
-    };
-  });
-
-  const platformsContainer = document.querySelector(".platforms");
-
-  for (const platform of platformNames) {
-    const platformEl = document.createElement("li");
-    platformEl.classList.add("platform");
-    platformEl.textContent = platform.name;
-    platformsContainer.appendChild(platformEl);
-  }
-
+function getPlatformIds(platformNames) {
   let containsPlatforms = true;
   let platformIds = "";
   do {
@@ -141,6 +110,42 @@ function appendCards(games, container) {
       })
       .join(",");
   } while (!containsPlatforms);
+  return platformIds;
+}
+
+(async () => {
+  //************ ZDK1 ************
+  const topGames = await getTopRatedGames();
+  appendCards(filterUnsafeGames(topGames), cardsContainer1);
+
+  //************ ZDK2 ************
+  const searchTerm = prompt("Enter a game name to search for:");
+  const searchTermTextEl = document.querySelector(".search-term");
+  searchTermTextEl.textContent = searchTerm;
+
+  const gamesBySearch = await getGamesBySearchTerm(searchTerm);
+  appendCards(filterUnsafeGames(gamesBySearch), cardsContainer2);
+
+  //************ ZDK3 ************
+  const platforms = await getPlatforms();
+
+  const platformNames = platforms.map((platform) => {
+    return {
+      id: platform.id,
+      name: platform.name,
+    };
+  });
+
+  const platformsContainer = document.querySelector(".platforms");
+
+  for (const platform of platformNames) {
+    const platformEl = document.createElement("li");
+    platformEl.classList.add("platform");
+    platformEl.textContent = platform.name;
+    platformsContainer.appendChild(platformEl);
+  }
+
+  const platformIds = getPlatformIds(platformNames);
 
   const gamesByPlatform = await getGamesByPlatform(platformIds);
   appendCards(filterUnsafeGames(gamesByPlatform), cardsContainer3);
