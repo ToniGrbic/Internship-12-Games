@@ -24,7 +24,7 @@ async function getTopRatedGames() {
   return games.results;
 }
 
-async function getGamesBySearchTerm(searchTerm = "GTA") {
+async function getGamesBySearchTerm(searchTerm) {
   const searchParams = keyParam();
   searchParams.append("search", searchTerm);
   searchParams.append("page_size", "10");
