@@ -1,11 +1,11 @@
 const baseUrl = "https://api.rawg.io/api";
-const API_KEY = "464bc085dbbf4f33bcb2ccb39d36a6ec";
+const API_KEY = "464bc085dbbf4f33bcb2ccb39d36a6ec"; //samo za dev, nije sigurno exposati API key na front-endu
 
-function keyParam() {
+const keyParam = () => {
   return new URLSearchParams(`key=${API_KEY}`);
-}
+};
 
-async function fetchData(url) {
+const fetchData = async (url) => {
   try {
     const response = await fetch(url);
     const data = await response.json();
@@ -14,7 +14,7 @@ async function fetchData(url) {
   } catch (error) {
     console.error(error);
   }
-}
+};
 
 async function getTopRatedGames() {
   const searchParams = keyParam();
@@ -71,6 +71,16 @@ async function getDevelopers() {
 async function getGamesByDeveloper(developerParamValue) {
   const searchParams = keyParam();
   searchParams.append("developers", developerParamValue);
+  searchParams.append("page_size", "10");
+  searchParams.append("ordering", "-metacritic");
+
+  const games = await fetchData(`${baseUrl}/games?${searchParams}`);
+  return games.results;
+}
+
+async function getGamesByDateRange(startDate, endDate) {
+  const searchParams = keyParam();
+  searchParams.append("dates", `${startDate},${endDate}`);
   searchParams.append("page_size", "10");
   searchParams.append("ordering", "-metacritic");
 
