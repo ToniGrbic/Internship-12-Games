@@ -1,5 +1,4 @@
 const baseUrl = "https://api.rawg.io/api";
-//const proxyUrl = "https://cors-anywhere.herokuapp.com";
 const API_KEY = "464bc085dbbf4f33bcb2ccb39d36a6ec";
 
 function keyParam() {
@@ -59,10 +58,20 @@ async function getGameDetails(gameId) {
   const game = await fetchData(`${baseUrl}/games/${gameId}?${searchParams}`);
   return game;
 }
+
+async function getDevelopers() {
+  const searchParams = keyParam();
+  searchParams.append("page_size", "10");
+
+  const developers = await fetchData(`${baseUrl}/developers?${searchParams}`);
+  return developers.results;
+}
+
 export {
   getTopRatedGames,
   getGamesBySearchTerm,
   getPlatforms,
   getGamesByPlatform,
   getGameDetails,
+  getDevelopers,
 };
