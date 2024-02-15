@@ -22,6 +22,26 @@ function filterUnsafeGames(games) {
   );
 }
 
+function inputString(message) {
+  let input = "";
+  do {
+    input = prompt(message);
+    if (input === "" || input === null) {
+      alert("Input can't be empty. Please try again.");
+    }
+  } while (input === "" || input === null);
+  return input;
+}
+
+function appendCards(games, container) {
+  for (const game of games) {
+    const card = document.createElement("div");
+    card.classList.add("card");
+    card.innerHTML = createGameCard(game);
+    container.appendChild(card);
+  }
+}
+
 function createStoreCard(store) {
   return `
   <img class="card-img" src=${store.image_background} alt=${store.name}>
@@ -74,15 +94,6 @@ function createStarRating(rating) {
     starsContainer.appendChild(star);
   }
   cardDetailsContainer.appendChild(starsContainer);
-}
-
-function appendCards(games, container) {
-  for (const game of games) {
-    const card = document.createElement("div");
-    card.classList.add("card");
-    card.innerHTML = createGameCard(game);
-    container.appendChild(card);
-  }
 }
 
 function getPlatformIds(platformNames) {
@@ -188,11 +199,11 @@ function inputDate(message, startDate = "") {
 
 (async () => {
   //************ ZDK1 ************
-  /* const topGames = await getTopRatedGames();
+  const topGames = await getTopRatedGames();
   appendCards(filterUnsafeGames(topGames), cardsContainer1);
 
   //************ ZDK2 ************
-  const searchTerm = prompt("Enter a game name to search for:");
+  const searchTerm = inputString("Enter a game name to search for:");
   const searchTermTextEl = document.querySelector(".search-term");
   searchTermTextEl.textContent = searchTerm;
 
@@ -224,7 +235,7 @@ function inputDate(message, startDate = "") {
   appendCards(filterUnsafeGames(gamesByPlatform), cardsContainer3);
 
   //************ ZDK4 ************
-  const gameId = prompt("Enter a game id to get details:");
+  const gameId = inputString("Enter a game id to get details:");
   getGameDetails(gameId).then((game) => {
     console.log(game);
     const card = document.createElement("div");
@@ -236,7 +247,7 @@ function inputDate(message, startDate = "") {
   });
 
   //************ ZDK5 ************
-  const gameIdForStores = prompt("Enter a game id to get its stores:");
+  const gameIdForStores = inputString("Enter a game id to get its stores:");
   getGameDetails(gameIdForStores).then((game) => {
     console.log(game);
     const stores = game.stores;
@@ -277,7 +288,7 @@ function inputDate(message, startDate = "") {
     appendCards(developer.games, cardsContainer);
     developerGamesContainer.appendChild(cardsContainer);
     gamesByDevelopersContainer.appendChild(developerGamesContainer);
-  } */
+  }
 
   //************ ZDK7 ************
   const startDate = inputDate("start date");
