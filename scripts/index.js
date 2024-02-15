@@ -5,12 +5,14 @@ import {
   getPlatforms,
   getGameDetails,
   getDevelopers,
+  getGamesByDeveloper,
 } from "./api.js";
 
 const cardsContainer1 = document.querySelector("#zdk1 .cards-container");
 const cardsContainer2 = document.querySelector("#zdk2 .cards-container");
 const cardsContainer3 = document.querySelector("#zdk3 .cards-container");
 const cardDetails = document.querySelector("#zdk4");
+const gamesByDevelopersContainer = document.querySelector("#zdk6");
 
 function filterUnsafeGames(games) {
   return games.filter(
@@ -88,7 +90,9 @@ function getPlatformIds(platformNames) {
     const selectedPlatforms = prompt(
       "Enter names of platforms separated by comma:"
     );
-    const selectedPlatformsArray = selectedPlatforms.split(",");
+    const selectedPlatformsArray = selectedPlatforms
+      .split(",")
+      .map((platform) => platform.trim());
 
     // Check that all inputed platforms are from the top 10
     containsPlatforms = selectedPlatformsArray.every((platform) => {
@@ -114,6 +118,40 @@ function getPlatformIds(platformNames) {
       .join(",");
   } while (!containsPlatforms);
   return platformIds;
+}
+
+function getDeveloperSlugs(developerSlugs) {
+  let areSlugsValid = false;
+  let selectedDeveloperSlugs = [];
+  do {
+    const selectedDevelopers = prompt(
+      "Ender a list of developer names separated by commas:"
+    );
+    const selectedDevelopersArray = selectedDevelopers.split(",");
+
+    selectedDeveloperSlugs = selectedDevelopersArray.map((developer) => {
+      const trimmedName = developer.trim();
+      let slug = "";
+      if (trimmedName.includes(" ")) {
+        const words = trimmedName.split(" ");
+        slug = words.join("-");
+      } else {
+        slug = trimmedName;
+      }
+      return slug.toLowerCase();
+    });
+
+    areSlugsValid = selectedDeveloperSlugs.every((slug) => {
+      const isValid = developerSlugs.includes(slug);
+      if (!isValid) {
+        alert(
+          `Developer with slug ${slug} is not on the list or does not exist.`
+        );
+      }
+      return isValid;
+    });
+  } while (!areSlugsValid);
+  return selectedDeveloperSlugs;
 }
 
 (async () => {
@@ -186,4 +224,28 @@ function getPlatformIds(platformNames) {
   const developers = await getDevelopers();
   const developerSlugs = developers.map((developer) => developer.slug);
   console.log(developerSlugs);
+
+  const selectedDeveloperSlugs = getDeveloperSlugs(developerSlugs);
+
+  const gamesByDevelopers = [];
+  for (const developer of selectedDeveloperSlugs) {
+    const developerGames = await getGamesByDeveloper(developer);
+    const filteredGames = filterUnsafeGames(developerGames);
+    gamesByDevelopers.push({ name: developer, games: filteredGames });
+  }
+
+  for (const developer of gamesByDevelopers) {
+    const developerGamesContainer = document.createElement("div");
+    developerGamesContainer.classList.add("developer-games-container");
+    developerGamesContainer.innerHTML = `<h2>${developer.name}</h2>`;
+
+    const cardsContainer = document.createElement("div");
+    cardsContainer.classList.add("cards-container");
+
+    appendCards(developer.games, cardsContainer);
+    developerGamesContainer.appendChild(cardsContainer);
+    gamesByDevelopersContainer.appendChild(developerGamesContainer);
+  }
+
+  //************ ZDK7 ************
 })();

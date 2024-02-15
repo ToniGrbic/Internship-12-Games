@@ -15,6 +15,7 @@ async function fetchData(url) {
     console.error(error);
   }
 }
+
 async function getTopRatedGames() {
   const searchParams = keyParam();
   searchParams.append("ordering", "-metacritic");
@@ -67,6 +68,16 @@ async function getDevelopers() {
   return developers.results;
 }
 
+async function getGamesByDeveloper(developerParamValue) {
+  const searchParams = keyParam();
+  searchParams.append("developers", developerParamValue);
+  searchParams.append("page_size", "10");
+  searchParams.append("ordering", "-metacritic");
+
+  const games = await fetchData(`${baseUrl}/games?${searchParams}`);
+  return games.results;
+}
+
 export {
   getTopRatedGames,
   getGamesBySearchTerm,
@@ -74,4 +85,5 @@ export {
   getGamesByPlatform,
   getGameDetails,
   getDevelopers,
+  getGamesByDeveloper,
 };
