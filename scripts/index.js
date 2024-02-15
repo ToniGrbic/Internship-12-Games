@@ -1,9 +1,10 @@
 import {
   getTopRatedGames,
   getGamesBySearchTerm,
-  getPlatforms,
   getGamesByPlatform,
+  getPlatforms,
   getGameDetails,
+  getDevelopers,
 } from "./api.js";
 
 const cardsContainer1 = document.querySelector("#zdk1 .cards-container");
@@ -100,7 +101,6 @@ function getPlatformIds(platformNames) {
       alert("Invalid platform names. Please try again.");
       continue;
     }
-
     const platformListSpan = document.querySelector("#selected-platforms");
     platformListSpan.textContent = selectedPlatforms;
 
@@ -183,4 +183,7 @@ function getPlatformIds(platformNames) {
   });
 
   //************ ZDK6 ************
+  const developers = await getDevelopers();
+  const developerSlugs = developers.map((developer) => developer.slug);
+  console.log(developerSlugs);
 })();
