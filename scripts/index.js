@@ -6,6 +6,7 @@ import {
   getGameDetails,
   getDevelopers,
   getGamesByDeveloper,
+  getGamesByDateRange,
 } from "./api.js";
 
 const cardsContainer1 = document.querySelector("#zdk1 .cards-container");
@@ -13,6 +14,7 @@ const cardsContainer2 = document.querySelector("#zdk2 .cards-container");
 const cardsContainer3 = document.querySelector("#zdk3 .cards-container");
 const cardDetails = document.querySelector("#zdk4");
 const gamesByDevelopersContainer = document.querySelector("#zdk6");
+const cardsContainer7 = document.querySelector("#zdk7 .cards-container");
 
 function filterUnsafeGames(games) {
   return games.filter(
@@ -154,9 +156,39 @@ function getDeveloperSlugs(developerSlugs) {
   return selectedDeveloperSlugs;
 }
 
+function inputDate(message, startDate = "") {
+  let isValidDate = false;
+  let date = "";
+  do {
+    date = prompt(
+      `Enter a ${message} (format: YYYY-MM-DD, year range: 1970-2024):`
+    );
+    isValidDate = !isNaN(Date.parse(date));
+
+    if (!isValidDate) {
+      alert("Invalid date format. Please try again.");
+      continue;
+    }
+
+    const [year, _] = date.split("-");
+
+    if (Number(year) < 1970 || Number(year) > 2024) {
+      isValidDate = false;
+      alert("Year is out of defined range, Please try again.");
+      continue;
+    }
+
+    if (startDate != "" && Date.parse(startDate) > Date.parse(date)) {
+      isValidDate = false;
+      alert("End date should be after start date, Please try again.");
+    }
+  } while (!isValidDate);
+  return date;
+}
+
 (async () => {
   //************ ZDK1 ************
-  const topGames = await getTopRatedGames();
+  /* const topGames = await getTopRatedGames();
   appendCards(filterUnsafeGames(topGames), cardsContainer1);
 
   //************ ZDK2 ************
@@ -245,7 +277,15 @@ function getDeveloperSlugs(developerSlugs) {
     appendCards(developer.games, cardsContainer);
     developerGamesContainer.appendChild(cardsContainer);
     gamesByDevelopersContainer.appendChild(developerGamesContainer);
-  }
+  } */
 
   //************ ZDK7 ************
+  const startDate = inputDate("start date");
+  const endDate = inputDate("end date", startDate);
+
+  const dateRangeSpan = document.querySelector("#date-range");
+  dateRangeSpan.textContent = `from: ${startDate} to: ${endDate}`;
+
+  const gamesByDateRange = await getGamesByDateRange(startDate, endDate);
+  appendCards(filterUnsafeGames(gamesByDateRange), cardsContainer7);
 })();

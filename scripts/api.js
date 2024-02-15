@@ -96,4 +96,5 @@ export {
   getGameDetails,
   getDevelopers,
   getGamesByDeveloper,
+  getGamesByDateRange,
 };
