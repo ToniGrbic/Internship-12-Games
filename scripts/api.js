@@ -92,8 +92,7 @@ async function getGamesByMetacriticRange(min, max) {
   const searchParams = keyParam();
   searchParams.append("metacritic", `${min},${max}`);
   searchParams.append("page_size", "20");
-  searchParams.append("ordering", "-metacritic");
-  searchParams.append("ordering", "name");
+  searchParams.append("ordering", "-metacritic,name");
 
   const games = await fetchData(`${baseUrl}/games?${searchParams}`);
   return games.results;
