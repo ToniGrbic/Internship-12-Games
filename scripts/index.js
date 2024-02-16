@@ -142,6 +142,7 @@ function getDeveloperSlugs(developerSlugs) {
     );
     const selectedDevelopersArray = selectedDevelopers.split(",");
 
+    // convert all developer names to slug format (ex. "Rockstar Games" -> "rockstar-games")
     selectedDeveloperSlugs = selectedDevelopersArray.map((developer) => {
       const trimmedName = developer.trim();
       let slug = "";
@@ -154,6 +155,7 @@ function getDeveloperSlugs(developerSlugs) {
       return slug.toLowerCase();
     });
 
+    // Check that all inputed slugs are from the developerSlugs list
     areSlugsValid = selectedDeveloperSlugs.every((slug) => {
       const isValid = developerSlugs.includes(slug);
       if (!isValid) {
