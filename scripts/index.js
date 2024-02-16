@@ -38,14 +38,16 @@ function inputString(message) {
 function inputMetacriticRange() {
   let min = 0;
   let max = 0;
+  const promptHelp =
+    "(range: 0-100, note: decimals are rounded to nearest int)";
   do {
-    min = Number(prompt("Enter a minimum metacritic rating (0-100):"));
+    min = Number(prompt(`Enter a minimum metacritic rating ${promptHelp}:`));
 
     if (isNaN(min) || min < 0 || min > 100) {
       alert("Invalid input. Please enter a number between 0 and 100.");
       continue;
     }
-    max = Number(prompt("Enter a maximum metacritic rating (0-100):"));
+    max = Number(prompt(`Enter a maximum metacritic rating ${promptHelp}:`));
 
     if (isNaN(max) || max < 0 || max > 100) {
       alert("Invalid input. Please enter a number between 0 and 100.");
