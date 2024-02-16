@@ -55,7 +55,7 @@ function inputMetacriticRange() {
       alert("Minimum rating should be less than maximum rating.");
     }
   } while (min > max);
-  return [min, max];
+  return [Math.round(min), Math.round(max)];
 }
 
 function appendCards(games, container) {
@@ -121,12 +121,14 @@ function createStarRating(rating) {
   cardDetailsContainer.appendChild(starsContainer);
 }
 
-function getPlatformIds(platformNames) {
+function inputPlatforms(platformNames) {
   let containsPlatforms = true;
   let platformIds = "";
   do {
     const selectedPlatforms = prompt(
-      "Enter names of platforms separated by comma:"
+      `Enter names of platforms separated by comma:\n top platforms: ${platformNames
+        .map((platform) => platform.name)
+        .join(", ")}`
     );
     const selectedPlatformsArray = selectedPlatforms
       .split(",")
@@ -140,44 +142,41 @@ function getPlatformIds(platformNames) {
     });
 
     if (!containsPlatforms) {
-      alert("Invalid platform names. Please try again.");
+      alert("input contains invalid platform names. Please try again.");
       continue;
     }
     const platformListSpan = document.querySelector("#selected-platforms");
     platformListSpan.textContent = selectedPlatforms;
 
     // find the platform ids
-    platformIds = selectedPlatformsArray
-      .map((platform) => {
-        return platformNames.find(
-          (platformName) => platformName.name === platform
-        ).id;
-      })
-      .join(",");
+    platformIds = getPlatformIds(platformNames, selectedPlatformsArray);
   } while (!containsPlatforms);
   return platformIds;
 }
 
-function getDeveloperSlugs(developerSlugs) {
+function getPlatformIds(platformNames, selectedPlatforms) {
+  const platformIds = selectedPlatforms.map((platform) => {
+    return platformNames.find((platformName) => platformName.name === platform)
+      .id;
+  });
+  return platformIds.join(",");
+}
+
+function inputDevelopersAndConvertToSlugs(developerSlugs, developerNames) {
   let areSlugsValid = false;
   let selectedDeveloperSlugs = [];
   do {
     const selectedDevelopers = prompt(
-      "Ender a list of developer names separated by commas:"
+      `top developers: ${developerNames.join(
+        ", "
+      )}\nEnter a list of developer names separated by commas:\n `
     );
     const selectedDevelopersArray = selectedDevelopers.split(",");
 
     // convert all developer names to slug format (ex. "Rockstar Games" -> "rockstar-games")
     selectedDeveloperSlugs = selectedDevelopersArray.map((developer) => {
       const trimmedName = developer.trim();
-      let slug = "";
-      if (trimmedName.includes(" ")) {
-        const words = trimmedName.split(" ");
-        slug = words.join("-");
-      } else {
-        slug = trimmedName;
-      }
-      return slug.toLowerCase();
+      return formatToSlug(trimmedName);
     });
 
     // Check that all inputed slugs are from the developerSlugs list
@@ -192,6 +191,17 @@ function getDeveloperSlugs(developerSlugs) {
     });
   } while (!areSlugsValid);
   return selectedDeveloperSlugs;
+}
+
+function formatToSlug(trimmedName) {
+  let slug = "";
+  if (trimmedName.includes(" ")) {
+    const words = trimmedName.split(" ");
+    slug = words.join("-");
+  } else {
+    slug = trimmedName;
+  }
+  return slug.toLowerCase();
 }
 
 function inputDate(message, startDate = "") {
@@ -256,7 +266,7 @@ function inputDate(message, startDate = "") {
     platformsContainer.appendChild(platformEl);
   }
 
-  const platformIds = getPlatformIds(platformNames);
+  const platformIds = inputPlatforms(platformNames);
 
   const gamesByPlatform = await getGamesByPlatform(platformIds);
   appendCards(filterUnsafeGames(gamesByPlatform), cardsContainer3);
@@ -293,9 +303,12 @@ function inputDate(message, startDate = "") {
   //************ ZDK6 ************
   const developers = await getDevelopers();
   const developerSlugs = developers.map((developer) => developer.slug);
-  console.log(developerSlugs);
+  const developerNames = developers.map((developer) => developer.name);
 
-  const selectedDeveloperSlugs = getDeveloperSlugs(developerSlugs);
+  const selectedDeveloperSlugs = inputDevelopersAndConvertToSlugs(
+    developerSlugs,
+    developerNames
+  );
 
   const gamesByDevelopers = [];
   for (const developer of selectedDeveloperSlugs) {
