@@ -226,7 +226,7 @@ function inputDate(message, startDate = "") {
 
 (async () => {
   //************ ZDK1 ************
-  /* const topGames = await getTopRatedGames();
+  const topGames = await getTopRatedGames();
   appendCards(filterUnsafeGames(topGames), cardsContainer1);
 
   //************ ZDK2 ************
@@ -325,7 +325,7 @@ function inputDate(message, startDate = "") {
   dateRangeSpan.textContent = `from: ${startDate} to: ${endDate}`;
 
   const gamesByDateRange = await getGamesByDateRange(startDate, endDate);
-  appendCards(filterUnsafeGames(gamesByDateRange), cardsContainer7); */
+  appendCards(filterUnsafeGames(gamesByDateRange), cardsContainer7);
 
   //************ ZDK8 ************
   const [min, max] = inputMetacriticRange();
