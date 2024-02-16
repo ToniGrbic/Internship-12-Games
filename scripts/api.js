@@ -38,7 +38,7 @@ async function getGamesByPlatform(platformIds) {
   const searchParams = keyParam();
   searchParams.append("platforms", platformIds);
   searchParams.append("page_size", "20");
-  searchParams.append("metacritic", "80,100");
+  searchParams.append("metacritic", "50,100");
   searchParams.append("ordering", "name");
 
   const games = await fetchData(`${baseUrl}/games?${searchParams}`);
@@ -83,6 +83,17 @@ async function getGamesByDateRange(startDate, endDate) {
   searchParams.append("dates", `${startDate},${endDate}`);
   searchParams.append("page_size", "10");
   searchParams.append("ordering", "-metacritic");
+
+  const games = await fetchData(`${baseUrl}/games?${searchParams}`);
+  return games.results;
+}
+
+async function getGamesByMetacriticRange(min, max) {
+  const searchParams = keyParam();
+  searchParams.append("metacritic", `${min},${max}`);
+  searchParams.append("page_size", "20");
+  searchParams.append("ordering", "-metacritic");
+  searchParams.append("ordering", "name");
 
   const games = await fetchData(`${baseUrl}/games?${searchParams}`);
   return games.results;
