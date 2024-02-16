@@ -108,4 +108,5 @@ export {
   getDevelopers,
   getGamesByDeveloper,
   getGamesByDateRange,
+  getGamesByMetacriticRange,
 };

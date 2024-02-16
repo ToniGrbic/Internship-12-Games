@@ -7,6 +7,7 @@ import {
   getDevelopers,
   getGamesByDeveloper,
   getGamesByDateRange,
+  getGamesByMetacriticRange,
 } from "./api.js";
 
 const cardsContainer1 = document.querySelector("#zdk1 .cards-container");
@@ -15,6 +16,7 @@ const cardsContainer3 = document.querySelector("#zdk3 .cards-container");
 const cardDetails = document.querySelector("#zdk4");
 const gamesByDevelopersContainer = document.querySelector("#zdk6");
 const cardsContainer7 = document.querySelector("#zdk7 .cards-container");
+const cardsContainer8 = document.querySelector("#zdk8 .cards-container");
 
 function filterUnsafeGames(games) {
   return games.filter(
@@ -31,6 +33,29 @@ function inputString(message) {
     }
   } while (input === "" || input === null);
   return input;
+}
+
+function inputMetacriticRange() {
+  let min = 0;
+  let max = 0;
+  do {
+    min = Number(prompt("Enter a minimum metacritic rating (0-100):"));
+
+    if (isNaN(min) || min < 0 || min > 100) {
+      alert("Invalid input. Please enter a number between 0 and 100.");
+      continue;
+    }
+    max = Number(prompt("Enter a maximum metacritic rating (0-100):"));
+
+    if (isNaN(max) || max < 0 || max > 100) {
+      alert("Invalid input. Please enter a number between 0 and 100.");
+      continue;
+    }
+    if (min > max) {
+      alert("Minimum rating should be less than maximum rating.");
+    }
+  } while (min > max);
+  return [min, max];
 }
 
 function appendCards(games, container) {
@@ -201,7 +226,7 @@ function inputDate(message, startDate = "") {
 
 (async () => {
   //************ ZDK1 ************
-  const topGames = await getTopRatedGames();
+  /* const topGames = await getTopRatedGames();
   appendCards(filterUnsafeGames(topGames), cardsContainer1);
 
   //************ ZDK2 ************
@@ -300,5 +325,13 @@ function inputDate(message, startDate = "") {
   dateRangeSpan.textContent = `from: ${startDate} to: ${endDate}`;
 
   const gamesByDateRange = await getGamesByDateRange(startDate, endDate);
-  appendCards(filterUnsafeGames(gamesByDateRange), cardsContainer7);
+  appendCards(filterUnsafeGames(gamesByDateRange), cardsContainer7); */
+
+  //************ ZDK8 ************
+  const [min, max] = inputMetacriticRange();
+
+  const metacriticRangeSpan = document.querySelector("#metacritic-range");
+  metacriticRangeSpan.textContent = `from: ${min} to: ${max}`;
+  const gamesByMetacriticRange = await getGamesByMetacriticRange(min, max);
+  appendCards(filterUnsafeGames(gamesByMetacriticRange), cardsContainer8);
 })();
