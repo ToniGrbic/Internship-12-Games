@@ -10,6 +10,14 @@ import {
   getGamesByMetacriticRange,
 } from "./api.js";
 
+import {
+  inputString,
+  inputMetacriticRange,
+  inputPlatforms,
+  inputDevelopersAndConvertToSlugs,
+  inputDate,
+} from "./input.js";
+
 const cardsContainer1 = document.querySelector("#zdk1 .cards-container");
 const cardsContainer2 = document.querySelector("#zdk2 .cards-container");
 const cardsContainer3 = document.querySelector("#zdk3 .cards-container");
@@ -24,43 +32,7 @@ function filterUnsafeGames(games) {
   );
 }
 
-function inputString(message) {
-  let input = "";
-  do {
-    input = prompt(message);
-    if (input === "" || input === null) {
-      alert("Input can't be empty. Please try again.");
-    }
-  } while (input === "" || input === null);
-  return input;
-}
-
-function inputMetacriticRange() {
-  let min = 0;
-  let max = 0;
-  const promptHelp =
-    "(range: 0-100, note: decimals are rounded to nearest int)";
-  do {
-    min = Number(prompt(`Enter a minimum metacritic rating ${promptHelp}:`));
-
-    if (isNaN(min) || min < 0 || min > 100) {
-      alert("Invalid input. Please enter a number between 0 and 100.");
-      continue;
-    }
-    max = Number(prompt(`Enter a maximum metacritic rating ${promptHelp}:`));
-
-    if (isNaN(max) || max < 0 || max > 100) {
-      alert("Invalid input. Please enter a number between 0 and 100.");
-      continue;
-    }
-    if (min > max) {
-      alert("Minimum rating should be less than maximum rating.");
-    }
-  } while (min > max);
-  return [Math.round(min), Math.round(max)];
-}
-
-function appendCards(games, container) {
+function appendGameCards(games, container) {
   for (const game of games) {
     const card = document.createElement("div");
     card.classList.add("card");
@@ -69,19 +41,13 @@ function appendCards(games, container) {
   }
 }
 
-function createStoreCard(store) {
-  return `
-  <img class="card-img" src=${store.image_background} alt=${store.name}>
-    <div class="card-body">
-      <h5 class="card-title">${store.name}</h5>
-      <p class="card-text"> 
-           <a href="https://${store.domain}" class="store-link">Website</a>
-       </p>
-       <p class="card-text">
-            ${store.games_count} games available
-       </p>
-    </div>
-    `;
+function appendStoreCards(stores, container) {
+  for (const store of stores) {
+    const card = document.createElement("div");
+    card.classList.add("card");
+    card.innerHTML = createStoreCard(store.store);
+    container.appendChild(card);
+  }
 }
 
 function createGameCard(game) {
@@ -96,6 +62,21 @@ function createGameCard(game) {
       <p class="card-text">
            Metacritic rating: 
            <span class="rating">${game.metacritic}</span>
+       </p>
+    </div>
+    `;
+}
+
+function createStoreCard(store) {
+  return `
+  <img class="card-img" src=${store.image_background} alt=${store.name}>
+    <div class="card-body">
+      <h5 class="card-title">${store.name}</h5>
+      <p class="card-text"> 
+           <a href="https://${store.domain}" class="store-link">Website</a>
+       </p>
+       <p class="card-text">
+            ${store.games_count} games available
        </p>
     </div>
     `;
@@ -123,123 +104,10 @@ function createStarRating(rating) {
   cardDetailsContainer.appendChild(starsContainer);
 }
 
-function inputPlatforms(platformNames) {
-  let containsPlatforms = true;
-  let platformIds = "";
-  do {
-    const selectedPlatforms = prompt(
-      `Enter names of platforms separated by comma:\n top platforms: ${platformNames
-        .map((platform) => platform.name)
-        .join(", ")}`
-    );
-    const selectedPlatformsArray = selectedPlatforms
-      .split(",")
-      .map((platform) => platform.trim());
-
-    // Check that all inputed platforms are from the top 10
-    containsPlatforms = selectedPlatformsArray.every((platform) => {
-      return platformNames.some(
-        (platformName) => platformName.name === platform
-      );
-    });
-
-    if (!containsPlatforms) {
-      alert("input contains invalid platform names. Please try again.");
-      continue;
-    }
-    const platformListSpan = document.querySelector("#selected-platforms");
-    platformListSpan.textContent = selectedPlatforms;
-
-    // find the platform ids
-    platformIds = getPlatformIds(platformNames, selectedPlatformsArray);
-  } while (!containsPlatforms);
-  return platformIds;
-}
-
-function getPlatformIds(platformNames, selectedPlatforms) {
-  const platformIds = selectedPlatforms.map((platform) => {
-    return platformNames.find((platformName) => platformName.name === platform)
-      .id;
-  });
-  return platformIds.join(",");
-}
-
-function inputDevelopersAndConvertToSlugs(developerSlugs, developerNames) {
-  let areSlugsValid = false;
-  let selectedDeveloperSlugs = [];
-  do {
-    const selectedDevelopers = prompt(
-      `top developers: ${developerNames.join(
-        ", "
-      )}\nEnter a list of developer names separated by commas:\n `
-    );
-    const selectedDevelopersArray = selectedDevelopers.split(",");
-
-    // convert all developer names to slug format (ex. "Rockstar Games" -> "rockstar-games")
-    selectedDeveloperSlugs = selectedDevelopersArray.map((developer) => {
-      const trimmedName = developer.trim();
-      return formatToSlug(trimmedName);
-    });
-
-    // Check that all inputed slugs are from the developerSlugs list
-    areSlugsValid = selectedDeveloperSlugs.every((slug) => {
-      const isValid = developerSlugs.includes(slug);
-      if (!isValid) {
-        alert(
-          `Developer with slug ${slug} is not on the list or does not exist.`
-        );
-      }
-      return isValid;
-    });
-  } while (!areSlugsValid);
-  return selectedDeveloperSlugs;
-}
-
-function formatToSlug(trimmedName) {
-  let slug = "";
-  if (trimmedName.includes(" ")) {
-    const words = trimmedName.split(" ");
-    slug = words.join("-");
-  } else {
-    slug = trimmedName;
-  }
-  return slug.toLowerCase();
-}
-
-function inputDate(message, startDate = "") {
-  let isValidDate = false;
-  let date = "";
-  do {
-    date = prompt(
-      `Enter a ${message} (format: YYYY-MM-DD, year range: 1970-2024):`
-    );
-    isValidDate = !isNaN(Date.parse(date));
-
-    if (!isValidDate) {
-      alert("Invalid date format. Please try again.");
-      continue;
-    }
-
-    const [year, _] = date.split("-");
-
-    if (Number(year) < 1970 || Number(year) > 2024) {
-      isValidDate = false;
-      alert("Year is out of defined range, Please try again.");
-      continue;
-    }
-
-    if (startDate != "" && Date.parse(startDate) > Date.parse(date)) {
-      isValidDate = false;
-      alert("End date should be after start date, Please try again.");
-    }
-  } while (!isValidDate);
-  return date;
-}
-
 (async () => {
   //************ ZDK1 ************
   const topGames = await getTopRatedGames();
-  appendCards(filterUnsafeGames(topGames), cardsContainer1);
+  appendGameCards(filterUnsafeGames(topGames), cardsContainer1);
 
   //************ ZDK2 ************
   const searchTerm = inputString("Enter a game name to search for:");
@@ -247,7 +115,7 @@ function inputDate(message, startDate = "") {
   searchTermTextEl.textContent = searchTerm;
 
   const gamesBySearch = await getGamesBySearchTerm(searchTerm);
-  appendCards(filterUnsafeGames(gamesBySearch), cardsContainer2);
+  appendGameCards(filterUnsafeGames(gamesBySearch), cardsContainer2);
 
   //************ ZDK3 ************
   const platforms = await getPlatforms();
@@ -271,12 +139,12 @@ function inputDate(message, startDate = "") {
   const platformIds = inputPlatforms(platformNames);
 
   const gamesByPlatform = await getGamesByPlatform(platformIds);
-  appendCards(filterUnsafeGames(gamesByPlatform), cardsContainer3);
+  appendGameCards(filterUnsafeGames(gamesByPlatform), cardsContainer3);
 
   //************ ZDK4 ************
   const gameId = inputString("Enter a game id to get details:");
+
   getGameDetails(gameId).then((game) => {
-    console.log(game);
     const card = document.createElement("div");
     card.classList.add("card");
     card.innerHTML = createGameCard(game);
@@ -287,19 +155,14 @@ function inputDate(message, startDate = "") {
 
   //************ ZDK5 ************
   const gameIdForStores = inputString("Enter a game id to get its stores:");
+
   getGameDetails(gameIdForStores).then((game) => {
-    console.log(game);
     const stores = game.stores;
     const storesContainer = document.querySelector(" #zdk5 .cards-container");
     const storesTitleSpan = document.querySelector("#game-name-stores");
     storesTitleSpan.textContent = game.name;
 
-    for (const store of stores) {
-      const card = document.createElement("div");
-      card.classList.add("card");
-      card.innerHTML = createStoreCard(store.store);
-      storesContainer.appendChild(card);
-    }
+    appendStoreCards(stores, storesContainer);
   });
 
   //************ ZDK6 ************
@@ -327,7 +190,7 @@ function inputDate(message, startDate = "") {
     const cardsContainer = document.createElement("div");
     cardsContainer.classList.add("cards-container");
 
-    appendCards(developer.games, cardsContainer);
+    appendGameCards(developer.games, cardsContainer);
     developerGamesContainer.appendChild(cardsContainer);
     gamesByDevelopersContainer.appendChild(developerGamesContainer);
   }
@@ -340,13 +203,14 @@ function inputDate(message, startDate = "") {
   dateRangeSpan.textContent = `from: ${startDate} to: ${endDate}`;
 
   const gamesByDateRange = await getGamesByDateRange(startDate, endDate);
-  appendCards(filterUnsafeGames(gamesByDateRange), cardsContainer7);
+  appendGameCards(filterUnsafeGames(gamesByDateRange), cardsContainer7);
 
   //************ ZDK8 ************
   const [min, max] = inputMetacriticRange();
 
   const metacriticRangeSpan = document.querySelector("#metacritic-range");
   metacriticRangeSpan.textContent = `from: ${min} to: ${max}`;
+
   const gamesByMetacriticRange = await getGamesByMetacriticRange(min, max);
-  appendCards(filterUnsafeGames(gamesByMetacriticRange), cardsContainer8);
+  appendGameCards(filterUnsafeGames(gamesByMetacriticRange), cardsContainer8);
 })();
