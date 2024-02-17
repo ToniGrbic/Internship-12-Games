@@ -18,14 +18,14 @@ import {
   inputDate,
 } from "./input.js";
 
-const cardsContainer1 = document.querySelector("#zdk1 .cards-container");
-const cardsContainer2 = document.querySelector("#zdk2 .cards-container");
-const cardsContainer3 = document.querySelector("#zdk3 .cards-container");
-const cardDetails = document.querySelector("#zdk4");
-const storesContainer = document.querySelector(" #zdk5 .cards-container");
-const gamesByDevelopersContainer = document.querySelector("#zdk6");
-const cardsContainer7 = document.querySelector("#zdk7 .cards-container");
-const cardsContainer8 = document.querySelector("#zdk8 .cards-container");
+const cardsContainerZdk1 = document.querySelector("#zdk1 .cards-container");
+const cardsContainerZdk2 = document.querySelector("#zdk2 .cards-container");
+const cardsContainerZdk3 = document.querySelector("#zdk3 .cards-container");
+const cardDetailsZdk4 = document.querySelector("#zdk4");
+const storesContainerZdk5 = document.querySelector(" #zdk5 .cards-container");
+const gamesByDevelopersContainerZdk6 = document.querySelector("#zdk6");
+const cardsContainerZdk7 = document.querySelector("#zdk7 .cards-container");
+const cardsContainerZdk8 = document.querySelector("#zdk8 .cards-container");
 
 function filterUnsafeGames(games) {
   return games.filter(
@@ -108,7 +108,7 @@ function createStarRating(rating) {
 (async () => {
   //************ ZDK1 ************
   const topGames = await getTopRatedGames();
-  appendGameCards(filterUnsafeGames(topGames), cardsContainer1);
+  appendGameCards(filterUnsafeGames(topGames), cardsContainerZdk1);
 
   //************ ZDK2 ************
   const searchTerm = inputString("Enter a game name to search for:");
@@ -116,7 +116,7 @@ function createStarRating(rating) {
   searchTermTextEl.textContent = searchTerm;
 
   const gamesBySearch = await getGamesBySearchTerm(searchTerm);
-  appendGameCards(filterUnsafeGames(gamesBySearch), cardsContainer2);
+  appendGameCards(filterUnsafeGames(gamesBySearch), cardsContainerZdk2);
 
   //************ ZDK3 ************
   const platforms = await getPlatforms();
@@ -140,7 +140,7 @@ function createStarRating(rating) {
   const platformIds = inputPlatforms(platformNames);
 
   const gamesByPlatform = await getGamesByPlatform(platformIds);
-  appendGameCards(filterUnsafeGames(gamesByPlatform), cardsContainer3);
+  appendGameCards(filterUnsafeGames(gamesByPlatform), cardsContainerZdk3);
 
   //************ ZDK4 ************
   const gameId = inputString("Enter a game id to get details:");
@@ -149,7 +149,7 @@ function createStarRating(rating) {
     const card = document.createElement("div");
     card.classList.add("card");
     card.innerHTML = createGameCard(game);
-    cardDetails.appendChild(card);
+    cardDetailsZdk4.appendChild(card);
 
     createStarRating(game.rating);
   });
@@ -162,7 +162,7 @@ function createStarRating(rating) {
     const storesTitleSpan = document.querySelector("#game-name-stores");
     storesTitleSpan.textContent = game.name;
 
-    appendStoreCards(stores, storesContainer);
+    appendStoreCards(stores, storesContainerZdk5);
   });
 
   //************ ZDK6 ************
@@ -192,7 +192,7 @@ function createStarRating(rating) {
 
     appendGameCards(developer.games, cardsContainer);
     developerGamesContainer.appendChild(cardsContainer);
-    gamesByDevelopersContainer.appendChild(developerGamesContainer);
+    gamesByDevelopersContainerZdk6.appendChild(developerGamesContainer);
   }
 
   //************ ZDK7 ************
@@ -203,7 +203,7 @@ function createStarRating(rating) {
   dateRangeSpan.textContent = `from: ${startDate} to: ${endDate}`;
 
   const gamesByDateRange = await getGamesByDateRange(startDate, endDate);
-  appendGameCards(filterUnsafeGames(gamesByDateRange), cardsContainer7);
+  appendGameCards(filterUnsafeGames(gamesByDateRange), cardsContainerZdk7);
 
   //************ ZDK8 ************
   const [min, max] = inputMetacriticRange();
@@ -212,5 +212,8 @@ function createStarRating(rating) {
   metacriticRangeSpan.textContent = `from: ${min} to: ${max}`;
 
   const gamesByMetacriticRange = await getGamesByMetacriticRange(min, max);
-  appendGameCards(filterUnsafeGames(gamesByMetacriticRange), cardsContainer8);
+  appendGameCards(
+    filterUnsafeGames(gamesByMetacriticRange),
+    cardsContainerZdk8
+  );
 })();
