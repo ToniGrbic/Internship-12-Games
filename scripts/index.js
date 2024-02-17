@@ -19,7 +19,6 @@ import {
 } from "./input.js";
 
 const cardsContainerZdk1 = document.querySelector("#zdk1 .cards-container");
-const cardsContainerZdk2 = document.querySelector("#zdk2 .cards-container");
 const cardsContainerZdk3 = document.querySelector("#zdk3 .cards-container");
 const cardDetailsZdk4 = document.querySelector("#zdk4");
 const storesContainerZdk5 = document.querySelector(" #zdk5 .cards-container");
@@ -112,12 +111,22 @@ function createStarRating(rating) {
   appendGameCards(filterUnsafeGames(topGames), cardsContainerZdk1);
 
   //************ ZDK2 ************
+  const zdk2Container = document.querySelector("#zdk2");
   const searchTerm = inputString("Enter a game name to search for:");
   const searchTermTextEl = document.querySelector(".search-term");
   searchTermTextEl.textContent = searchTerm;
 
   const gamesBySearch = await getGamesBySearchTerm(searchTerm);
-  appendGameCards(filterUnsafeGames(gamesBySearch), cardsContainerZdk2);
+
+  const filteredGames = filterUnsafeGames(gamesBySearch);
+  const resultsTag = document.createElement("h3");
+  resultsTag.textContent = `Results: ${filteredGames.length}`;
+  zdk2Container.append(resultsTag);
+
+  const cardsContainerZdk2 = document.createElement("div");
+  cardsContainerZdk2.classList.add("cards-container");
+  zdk2Container.append(cardsContainerZdk2);
+  appendGameCards(filteredGames, cardsContainerZdk2);
 
   //************ ZDK3 ************
   const platforms = await getPlatforms();
