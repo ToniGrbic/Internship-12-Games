@@ -107,7 +107,7 @@ function createStarRating(rating) {
 
 (async () => {
   //************ ZDK1 ************
-  /*  const topGames = await getTopRatedGames();
+  const topGames = await getTopRatedGames();
   appendGameCards(filterUnsafeGames(topGames), cardsContainerZdk1);
 
   //************ ZDK2 ************
@@ -141,7 +141,7 @@ function createStarRating(rating) {
 
   const gamesByPlatform = await getGamesByPlatform(platformIds);
   appendGameCards(filterUnsafeGames(gamesByPlatform), cardsContainerZdk3);
- */
+
   //************ ZDK4 ************
   let idValidZdk4;
   do {
