@@ -1,3 +1,5 @@
+import { getGameDetails } from "./api.js";
+
 function inputString(message) {
   let input = "";
   do {
@@ -147,10 +149,33 @@ function inputDate(message, startDate = "") {
   return date;
 }
 
+async function inputIdAndGetGame(message) {
+  let idValid;
+
+  do {
+    idValid = true;
+    const gameDetailsId = inputString(`Enter a game id to get its ${message}:`);
+
+    try {
+      const game = await getGameDetails(gameDetailsId);
+      // for id 120, game does not exist
+      if (game?.detail === "Not found.") {
+        throw new Error("Game does not exist");
+      }
+      return game;
+    } catch (err) {
+      console.log(err);
+      alert("Invalid game id. Please try again.");
+      idValid = false;
+    }
+  } while (!idValid);
+}
+
 export {
   inputString,
   inputMetacriticRange,
   inputPlatforms,
   inputDevelopersAndConvertToSlugs,
   inputDate,
+  inputIdAndGetGame,
 };

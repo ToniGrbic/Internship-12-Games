@@ -3,7 +3,6 @@ import {
   getGamesBySearchTerm,
   getGamesByPlatform,
   getPlatforms,
-  getGameDetails,
   getDevelopers,
   getGamesByDeveloper,
   getGamesByDateRange,
@@ -16,6 +15,7 @@ import {
   inputPlatforms,
   inputDevelopersAndConvertToSlugs,
   inputDate,
+  inputIdAndGetGame,
 } from "./input.js";
 
 const cardsContainerZdk1 = document.querySelector("#zdk1 .cards-container");
@@ -93,11 +93,12 @@ function createStarRating(rating) {
   ratingExact.textContent = `Rating: ${rating}/5`;
   starsContainer.appendChild(ratingExact);
 
-  for (let i = 0; i < 5; i++) {
+  for (let i = 1; i <= 5; i++) {
     const star = document.createElement("i");
     star.classList.add("fa-regular", "fa-star");
     const ratingRounded = Math.round(rating);
-    if (i + 1 <= ratingRounded) {
+
+    if (i <= ratingRounded) {
       star.classList.add("filled-star");
     }
     starsContainer.appendChild(star);
@@ -143,50 +144,20 @@ function createStarRating(rating) {
   appendGameCards(filterUnsafeGames(gamesByPlatform), cardsContainerZdk3);
 
   //************ ZDK4 ************
-  let idValidZdk4;
-  do {
-    idValidZdk4 = true;
+  const gameDetails = await inputIdAndGetGame("details");
 
-    const gameDetailsId = inputString("Enter a game id to get details:");
-
-    let game;
-    try {
-      game = await getGameDetails(gameDetailsId);
-      // for id 120, game does not exist
-      if (game.detail === "Not found.") {
-        throw new Error("Game does not exist");
-      }
-    } catch (err) {
-      console.log(err); // for id 120, game does not exist
-      alert("Invalid game id. Please try again.");
-      idValidZdk4 = false;
-      continue;
-    }
-    const card = document.createElement("div");
-    card.classList.add("card");
-    card.innerHTML = createGameCard(game);
-    cardDetailsZdk4.appendChild(card);
-    createStarRating(game.rating);
-  } while (!idValidZdk4);
+  const card = document.createElement("div");
+  card.classList.add("card");
+  card.innerHTML = createGameCard(gameDetails);
+  cardDetailsZdk4.appendChild(card);
+  createStarRating(gameDetails.rating);
 
   //************ ZDK5 ************
-  let idValidZdk5;
-  do {
-    idValidZdk5 = true;
-    const gameIdForStores = inputString("Enter a game id to get its stores:");
-    try {
-      const game = await getGameDetails(gameIdForStores);
-      const stores = game.stores;
-      const storesTitleSpan = document.querySelector("#game-name-stores");
-      storesTitleSpan.textContent = game.name;
-
-      appendStoreCards(stores, storesContainerZdk5);
-    } catch (err) {
-      console.log(err); // for id 120, game does not exist
-      alert("Invalid game id. Please try again.");
-      idValidZdk5 = false;
-    }
-  } while (!idValidZdk5);
+  const gameForStores = await inputIdAndGetGame("stores");
+  const stores = gameForStores.stores;
+  const storesTitleSpan = document.querySelector("#game-name-stores");
+  storesTitleSpan.textContent = gameForStores.name;
+  appendStoreCards(stores, storesContainerZdk5);
 
   //************ ZDK6 ************
   const developers = await getDevelopers();
