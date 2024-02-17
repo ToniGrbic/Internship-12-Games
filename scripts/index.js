@@ -22,6 +22,7 @@ const cardsContainer1 = document.querySelector("#zdk1 .cards-container");
 const cardsContainer2 = document.querySelector("#zdk2 .cards-container");
 const cardsContainer3 = document.querySelector("#zdk3 .cards-container");
 const cardDetails = document.querySelector("#zdk4");
+const storesContainer = document.querySelector(" #zdk5 .cards-container");
 const gamesByDevelopersContainer = document.querySelector("#zdk6");
 const cardsContainer7 = document.querySelector("#zdk7 .cards-container");
 const cardsContainer8 = document.querySelector("#zdk8 .cards-container");
@@ -158,7 +159,6 @@ function createStarRating(rating) {
 
   getGameDetails(gameIdForStores).then((game) => {
     const stores = game.stores;
-    const storesContainer = document.querySelector(" #zdk5 .cards-container");
     const storesTitleSpan = document.querySelector("#game-name-stores");
     storesTitleSpan.textContent = game.name;
 
