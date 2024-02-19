@@ -1,7 +1,7 @@
 import {
   getTopRatedGames,
   getGamesBySearchTerm,
-  getGamesByPlatform,
+  getGamesByPlatforms,
   getPlatforms,
   getDevelopers,
   getGamesByDeveloper,
@@ -149,7 +149,7 @@ function createStarRating(rating) {
 
   const platformIds = inputPlatforms(platformNames);
 
-  const gamesByPlatform = await getGamesByPlatform(platformIds);
+  const gamesByPlatform = await getGamesByPlatforms(platformIds);
   appendGameCards(filterUnsafeGames(gamesByPlatform), cardsContainerZdk3);
 
   //************ ZDK4 ************

@@ -34,11 +34,11 @@ async function getGamesBySearchTerm(searchTerm) {
   return games.results;
 }
 
-async function getGamesByPlatform(platformIds) {
+async function getGamesByPlatforms(platformIds) {
   const searchParams = keyParam();
   searchParams.append("platforms", platformIds);
   searchParams.append("page_size", "20");
-  searchParams.append("metacritic", "50,100");
+  searchParams.append("metacritic", "50,100"); // nije specificirano u zadatku, dodano kako nebi prikazivalo igre sa null metacritic rating
   searchParams.append("ordering", "name");
 
   const games = await fetchData(`${baseUrl}/games?${searchParams}`);
@@ -102,7 +102,7 @@ export {
   getTopRatedGames,
   getGamesBySearchTerm,
   getPlatforms,
-  getGamesByPlatform,
+  getGamesByPlatforms,
   getGameDetails,
   getDevelopers,
   getGamesByDeveloper,
