@@ -152,10 +152,7 @@ function createStarRating(rating, container) {
 
   //************ ZDK4 ************
   const gameDetails = await inputIdAndGetGame("details");
-  const cardDetails = document.querySelector("#zdk4 .card-details");
-
-  const card = document.createElement("div");
-  card.classList.add("card");
+  const cardDetails = cardDetailsZdk4.querySelector("#zdk4 .card-details");
   const cardContent = createGameCard(gameDetails);
 
   cardDetails.innerHTML = `
