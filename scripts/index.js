@@ -82,9 +82,7 @@ function createStoreCard(store) {
     `;
 }
 
-function createStarRating(rating) {
-  const cardDetailsContainer = document.querySelector("#zdk4 .card");
-
+function createStarRating(rating, container) {
   const starsContainer = document.createElement("div");
   starsContainer.classList.add("stars-container");
 
@@ -102,7 +100,7 @@ function createStarRating(rating) {
     }
     starsContainer.appendChild(star);
   }
-  cardDetailsContainer.appendChild(starsContainer);
+  container.appendChild(starsContainer);
 }
 
 (async () => {
@@ -154,12 +152,23 @@ function createStarRating(rating) {
 
   //************ ZDK4 ************
   const gameDetails = await inputIdAndGetGame("details");
+  const cardDetails = document.querySelector("#zdk4 .card-details");
 
   const card = document.createElement("div");
   card.classList.add("card");
-  card.innerHTML = createGameCard(gameDetails);
-  cardDetailsZdk4.appendChild(card);
-  createStarRating(gameDetails.rating);
+  const cardContent = createGameCard(gameDetails);
+
+  cardDetails.innerHTML = `
+    <div class="card">
+        ${cardContent}
+    </div>
+    <div class="card-details-description">
+      <h3>Description:</h3>
+      <p>${gameDetails.description_raw}</p>
+    </div>
+  `;
+  const cardContainer = cardDetails.querySelector(".card");
+  createStarRating(gameDetails.rating, cardContainer);
 
   //************ ZDK5 ************
   const gameForStores = await inputIdAndGetGame("stores");
