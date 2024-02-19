@@ -58,6 +58,12 @@ body {
   display: flex;
 }
 
+@media (max-width: 768px) {
+  .card-details {
+    flex-direction: column;
+  }
+}
+
 .card-details-description {
   margin: 0 15px;
   max-width: 800px;
