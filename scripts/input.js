@@ -165,7 +165,7 @@ async function inputIdAndGetGame(message) {
       return game;
     } catch (err) {
       console.log(err);
-      alert("Invalid game id. Please try again.");
+      alert(`Game with id ${gameDetailsId} does not exist. Please try again.`);
       idValid = false;
     }
   } while (!idValid);
